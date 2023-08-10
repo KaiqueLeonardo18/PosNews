@@ -1,8 +1,12 @@
-using Infraestrutura;
+using Infraestrutura.Contextes;
+using Infraestrutura.Contexts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PosNews.Interfaces;
 using PosNews.Mapping;
 using PosNews.Repository;
+using PosNews.Services;
+using PosNews.Services.Interfaces;
 
 namespace PosNews
 {
@@ -24,6 +28,22 @@ namespace PosNews
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSqlConnection"));
             });
 
+            builder.Services.AddDbContext<AuthDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("AuthSqlConnection"));
+            });
+
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 5;
+            }).AddEntityFrameworkStores<AuthDbContext>().AddDefaultTokenProviders();
+
+            //builder.Services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme =
+            //})
+
+            builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<INoticiaRepository, NoticiaRepository>();
             builder.Services.AddAutoMapper(typeof(MappingConfig));
 
@@ -38,6 +58,7 @@ namespace PosNews
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
