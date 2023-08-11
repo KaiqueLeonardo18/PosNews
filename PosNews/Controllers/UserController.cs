@@ -16,7 +16,7 @@ namespace PosNews.Controllers
         }
 
         [HttpPost("Cadastrar")]
-        public async Task<IActionResult> RegisterUser(LoginUser user) 
+        public async Task<IActionResult> RegisterUser(RegisterUser user) 
         {
             var result = await _authService.RegisterUser(user);
             if(result)
@@ -38,7 +38,7 @@ namespace PosNews.Controllers
 
             if(result == true) 
             { 
-                var tokenString = _authService.GenerateTokenString(user);
+                var tokenString = await _authService.GenerateTokenString(user);
                 return Ok(tokenString);
             }
 

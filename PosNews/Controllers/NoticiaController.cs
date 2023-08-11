@@ -43,6 +43,7 @@ namespace PosNews.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<NoticiaDto>>> GetAllAsync()
         {

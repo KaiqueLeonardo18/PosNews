@@ -19,7 +19,7 @@ namespace PosNews.Services
             _configuration = configuration;
         }
 
-        public async Task<bool> RegisterUser(LoginUser user)
+        public async Task<bool> RegisterUser(RegisterUser user)
         {
             var identityUser = new IdentityUser
             {
@@ -29,6 +29,8 @@ namespace PosNews.Services
             };
 
             var result = await _userManager.CreateAsync(identityUser, user.Password);
+
+            await _userManager.AddToRoleAsync(identityUser, user.Role);
 
             return result.Succeeded;
         }
@@ -46,21 +48,29 @@ namespace PosNews.Services
             return await _userManager.CheckPasswordAsync(identityUser, user.Password);
         }
 
-        public string GenerateTokenString(LoginUser user)
+        public async Task<string> GenerateTokenString(LoginUser user)
         {
-            List<Claim> claims = new List<Claim>
+            var identityUser =  await _userManager.FindByEmailAsync(user.UserName);
+           var roles =  await _userManager.GetRolesAsync(identityUser);
+
+
+            List<Claim> claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.Email, user.UserName));
+
+            foreach (var role in roles)
             {
-                new Claim(ClaimTypes.Email, user.UserName),
-                new Claim(ClaimTypes.Role,"Admin"),
-            };
-             
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Value));
 
             SigningCredentials signingCred = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
 
             var securityToken = new JwtSecurityToken(
                claims:claims,
-               expires: DateTime.Now.AddDays(1),
+               expires: DateTime.Now.AddMinutes(60),
                issuer:  _configuration.GetSection("Jwt:Issuer").Value,
                audience: _configuration.GetSection("Jwt:Audience").Value,
                 signingCredentials: signingCred
