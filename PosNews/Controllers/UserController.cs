@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PosNews.Models;
 using PosNews.Services.Interfaces;
 
@@ -38,8 +37,9 @@ namespace PosNews.Controllers
             var result =  await _authService.Login(user);
 
             if(result == true) 
-            {
-                return Ok();
+            { 
+                var tokenString = _authService.GenerateTokenString(user);
+                return Ok(tokenString);
             }
 
             return BadRequest();
