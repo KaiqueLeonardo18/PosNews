@@ -1,7 +1,7 @@
-﻿using PosNews.Interfaces;
+﻿ using PosNews.Interfaces;
 using Infraestrutura.Models;
-using Infraestrutura;
 using Microsoft.EntityFrameworkCore;
+using Infraestrutura.Contexts;
 
 namespace PosNews.Repository
 {

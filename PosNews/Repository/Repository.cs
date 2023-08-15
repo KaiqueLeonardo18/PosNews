@@ -1,8 +1,8 @@
-﻿using Infraestrutura;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PosNews.Interfaces;
 using System.Linq.Expressions;
 using System.Linq;
+using Infraestrutura.Contexts;
 
 namespace PosNews.Repository
 {

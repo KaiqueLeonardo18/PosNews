@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Infraestrutura.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PosNews.Interfaces;
 using PosNews.Models.Dto;
@@ -8,6 +9,7 @@ namespace PosNews.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class NoticiaController : ControllerBase
     {
         private readonly INoticiaRepository _noticiaRepository;
@@ -41,6 +43,7 @@ namespace PosNews.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<NoticiaDto>>> GetAllAsync()
         {
